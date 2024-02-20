@@ -16,7 +16,7 @@ extern bool_t is_debug;
 
 #define eprintf(fmt, args...)                                                  \
   do {                                                                         \
-    fprintf(stderr, "%s: " fmt, program_name, ##args);                         \
+    fprintf(stderr, "%s: " fmt "\n", program_name, ##args);                    \
   } while (0)
 #define eprintf_errno(fmt, args...)                                            \
   do {                                                                         \
@@ -29,3 +29,4 @@ extern bool_t is_debug;
   } while (0)
 
 #endif
+

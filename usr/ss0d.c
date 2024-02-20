@@ -25,31 +25,33 @@
 const char program_name[] = SS0D;
 bool_t is_active = true;
 bool_t is_debug = true;
-short int control_port;
+short int control_port = 0;
 
 static struct option const l_opts[] = {
   { "foreground", no_argument, 0, 'f' },
   { "pid-file", required_argument, 0, 'p' },
+  { "control_port", required_argument, 0, 'C' },
   { "version", no_argument, 0, 'V' },
   { "help", no_argument, 0, 'h' },
   { 0, 0, 0, 0 },
 };
-static char* s_opts = "fVhp:";
+static char* s_opts = "fVhp:C:";
 
 static void
 usage(int status)
 {
   if (status) {
     fprintf(stderr, "Try `" SS0D " --help' for more information.\n");
-    exit(status);
+    exit(EINVAL);
   }
 
   printf("SS0 filesystem daemon, version " SS0D_VERSION "\n\n"
          "Usage: " SS0D " [OPTION]\n"
-         "-f, --foreground        run the program in the foreground\n"
-         "-p, --pid-file          filename specify the pid file\n"
-         "-V, --version           print version and exit\n"
-         "-h, --help              display this help and exit\n");
+         "-f, --foreground           run the program in the foreground\n"
+         "-p, --pid-file             filename specify the pid file\n"
+         "-C, --control-port <port>  use control port <port>\n"
+         "-V, --version              print version and exit\n"
+         "-h, --help                 display this help and exit\n");
   exit(0);
 }
 
@@ -59,7 +61,13 @@ parse_opt(int argc, char** argv)
   int ch, l_idx;
 
   while ((ch = getopt_long(argc, argv, s_opts, l_opts, &l_idx)) >= 0) {
+    errno = 0;
     switch (ch) {
+      case 'C':
+        if (ATON_GE(optarg, control_port, 0))
+          INVAL_OPT(ch, optarg, usage);
+
+        break;
       case 'V':
         version();
         break;

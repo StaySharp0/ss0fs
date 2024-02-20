@@ -1,6 +1,7 @@
 #ifndef _UTIL_H
 #define _UTIL_H
 
+#include <errno.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,11 +16,38 @@
   ({                                                                           \
     void* ptr;                                                                 \
     if ((ptr = calloc(1, size)) == NULL)                                       \
-      eprintf("%m\n");                                                         \
+      eprintf("%m");                                                           \
     ptr;                                                                       \
   })
-
 #define ZEROING(var) memset(&var, 0, sizeof(var))
+
+#define ATON(str, val)                                                         \
+  ({                                                                           \
+    errno = 0;                                                                 \
+    char* ptr;                                                                 \
+    unsigned long long ull_val;                                                \
+    ull_val = strtoull(str, &ptr, 0);                                          \
+    val = (typeof(val))ull_val;                                                \
+    if (val != ull_val)                                                        \
+      errno = ERANGE;                                                          \
+    errno;                                                                     \
+  })
+#define ATON_GE(str, val, minv)                                                \
+  ({                                                                           \
+    errno = ATON(str, val);                                                    \
+    if (!errno && (val < minv))                                                \
+      errno = ERANGE;                                                          \
+    errno;                                                                     \
+  })
+
+#define INVAL_OPT(ch, ipt, usage)                                              \
+  ({                                                                           \
+    if (errno != EINVAL)                                                       \
+      eprintf_errno("invalid argument value '-%c': '%s'", ch, ipt);            \
+    else                                                                       \
+      eprintf("invalid argument value '-%c': '%s'", ch, ipt);                  \
+    usage(errno);                                                              \
+  })
 
 static inline void
 version(void)

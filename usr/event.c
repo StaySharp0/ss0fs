@@ -99,7 +99,7 @@ del_event(int fd)
   event_data_t* evt;
 
   if (!(evt = lookup_event(fd))) {
-    eprintf("can't find event %d\n", fd);
+    eprintf("can't find event %d", fd);
     return;
   }
 
@@ -111,3 +111,4 @@ del_event(int fd)
 
   need_refresh = true;
 }
+

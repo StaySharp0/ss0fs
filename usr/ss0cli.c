@@ -18,10 +18,9 @@
 #include "ss0cli.h"
 
 const char program_name[] = SS0CLI;
-
 bool_t is_debug = true;
+static short int control_port = 0;
 
-static short int control_port;
 static struct option const l_opts[] = {
   { "control-port", required_argument, 0, 'C' },
   { "version", no_argument, 0, 'V' },
@@ -35,7 +34,7 @@ usage(int status)
 {
   if (status) {
     fprintf(stderr, "Try `" SS0CLI " --help' for more information.\n");
-    exit(status);
+    exit(EINVAL);
   }
 
   printf("SS0 filesystem command-line interface, version " SS0D_VERSION "\n\n"
@@ -52,8 +51,11 @@ parse_opt(int argc, char** argv)
   int ch, l_idx;
 
   while ((ch = getopt_long(argc, argv, s_opts, l_opts, &l_idx)) >= 0) {
+    errno = 0;
     switch (ch) {
       case 'C':
+        if (ATON_GE(optarg, control_port, 0))
+          INVAL_OPT(ch, optarg, usage);
         break;
       case 'V':
         version();
@@ -80,7 +82,7 @@ connect_ctl_ipc(void)
 
   snprintf(ctl_path, STR_SIZE(ctl_path), "%s.%d", path, control_port);
   if (strlen(ctl_path) > STR_SIZE(addr.sun_path)) {
-    eprintf("control path too long: %s\n", ctl_path);
+    eprintf("control path too long: %s", ctl_path);
     errno = EINVAL;
     goto out;
   }

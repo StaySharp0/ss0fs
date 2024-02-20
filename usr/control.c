@@ -107,7 +107,7 @@ ctl_handler(int accept_fd, int evts, void* data)
 
   /* non-blocking socket */
   if (set_non_blocking(fd) < 0) {
-    eprintf("failed to set a socket non-blocking\n");
+    eprintf("failed to set a socket non-blocking");
     goto out;
   }
 
@@ -116,7 +116,7 @@ ctl_handler(int accept_fd, int evts, void* data)
     goto out;
 
   if (add_event(fd, EPOLLIN, ctl_recv_send_handler, ptr)) {
-    eprintf("failed to add a socket to epoll %d\n", fd);
+    eprintf("failed to add a socket to epoll %d", fd);
     ctl_free(ptr);
     goto out;
   }
@@ -145,7 +145,7 @@ init_ctl_ipc(void)
 
   snprintf(ctl_path, STR_SIZE(ctl_path), "%s.%d", path, control_port);
   if (strlen(ctl_path) > STR_SIZE(addr.sun_path)) {
-    eprintf("control path too long: %s\n", ctl_path);
+    eprintf("control path too long: %s", ctl_path);
     goto out;
   }
 
