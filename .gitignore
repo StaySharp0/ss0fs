@@ -1,0 +1,17 @@
+
+##########
+# builds #
+##########
+compile_commands.json
+.*
+!.gitignore
+!.clang-format
+*.o
+*.d
+
+############
+# programs #
+############
+usr/ss0d
+usr/ss0cli
+
