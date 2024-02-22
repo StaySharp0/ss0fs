@@ -10,6 +10,32 @@
 #include "util.h"
 
 void
+parse_opt(int argc,
+          char** argv,
+          struct option* l_opts,
+          char* s_opts,
+          opt_handler_t handler)
+{
+  int opt, l_idx;
+
+  do {
+    opt = getopt_long(argc, argv, s_opts, l_opts, &l_idx);
+    if (opt == -1 && optind < argc) {
+      opt = '?';
+      optarg = argv[optind];
+      argc -= optind;
+      argv += optind;
+      optind = 1;
+    }
+
+    if (opt != -1) {
+      dprintf("opt '%c': '%s'\n", opt, optarg);
+      handler(opt, optarg);
+    }
+  } while (opt != -1);
+}
+
+void
 set_signal(__sighandler_t handler)
 {
   struct sigaction sa_old;
@@ -40,4 +66,3 @@ set_non_blocking(int fd)
 
   return err;
 }
-

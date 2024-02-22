@@ -34,7 +34,7 @@ ss0d: $(SS0D_OBJS)
 ##########
 # SS0CLI #
 ##########
-SS0CLI_OBJS = ss0cli.o
+SS0CLI_OBJS = ss0cli.o util.o
 SS0CLI_DEP = $(SS0CLI_OBJS:.o=.d)
 
 ss0cli: $(SS0CLI_OBJS)

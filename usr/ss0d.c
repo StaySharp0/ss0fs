@@ -56,7 +56,7 @@ usage(int status)
 }
 
 static void
-parse_opt(int argc, char** argv)
+parse_opt_(int argc, char** argv)
 {
   int ch, l_idx;
 
@@ -156,7 +156,7 @@ exit_main(int signo)
 int
 main(int argc, char** argv)
 {
-  parse_opt(argc, argv);
+  parse_opt_(argc, argv);
 
   set_signal(exit_main);
   set_proc_oom();

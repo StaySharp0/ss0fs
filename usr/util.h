@@ -2,6 +2,7 @@
 #define _UTIL_H
 
 #include <errno.h>
+#include <getopt.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,6 +49,14 @@
       eprintf("invalid argument value '-%c': '%s'", ch, ipt);                  \
     usage(errno);                                                              \
   })
+
+typedef void (*opt_handler_t)(int opt, char* value);
+void
+parse_opt(int argc,
+          char** argv,
+          struct option* l_opts,
+          char* s_opts,
+          opt_handler_t handler);
 
 static inline void
 version(void)
