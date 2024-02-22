@@ -26,8 +26,12 @@ extern bool_t is_debug;
   do {                                                                         \
     if (is_debug)                                                              \
       fprintf(stderr,                                                          \
-              "[%8s:%10s:%4d] " fmt,                                           \
+              "[%*.*s:%*.*s](%4d) " fmt,                                       \
+              8,                                                               \
+              8,                                                               \
               __FILE__,                                                        \
+              10,                                                              \
+              10,                                                              \
               __FUNCTION__,                                                    \
               __LINE__,                                                        \
               ##args);                                                         \
