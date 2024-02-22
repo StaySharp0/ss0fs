@@ -25,8 +25,12 @@ extern bool_t is_debug;
 #define dprintf(fmt, args...)                                                  \
   do {                                                                         \
     if (is_debug)                                                              \
-      fprintf(stderr, "%s %d: " fmt, __FUNCTION__, __LINE__, ##args);          \
+      fprintf(stderr,                                                          \
+              "[%8s:%10s:%4d] " fmt,                                           \
+              __FILE__,                                                        \
+              __FUNCTION__,                                                    \
+              __LINE__,                                                        \
+              ##args);                                                         \
   } while (0)
 
 #endif
-
