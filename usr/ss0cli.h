@@ -10,7 +10,8 @@
 enum cli_op_e
 {
   OP_MIN = 0,
-  OP_STOP,
+#define OP(name, key) OP_##name,
+#include "op.list"
   OP_MAX = UINT16_MAX
 };
 typedef uint16_t cli_op_t;
@@ -19,6 +20,11 @@ typedef struct cli_req_s
 {
   cli_op_t op;
 } cli_req_t;
+
+typedef struct cli_res_s
+{
+  uint32_t status;
+} cli_res_t;
 
 extern int
 connect_ctl_ipc(void);

@@ -52,13 +52,13 @@ run_event_loop(void)
 }
 
 int
-add_event(int fd, int evts, event_handler_t handler, void* data)
+add_event(int fd, int evtf, event_handler_t handler, void* data)
 {
   struct epoll_event ep_evt;
   event_data_t* evt;
   int err;
 
-  if (!(evt = ALLOC(sizeof(*evt))))
+  if (!(evt = CALLOC(sizeof(*evt))))
     return -ENOMEM;
 
   evt->fd = fd;
@@ -66,7 +66,7 @@ add_event(int fd, int evts, event_handler_t handler, void* data)
   evt->handler = handler;
 
   ZEROING(ep_evt);
-  ep_evt.events = evts;
+  ep_evt.events = evtf;
   ep_evt.data.ptr = evt;
 
   if ((err = epoll_ctl(ep_fd, EPOLL_CTL_ADD, fd, &ep_evt))) {
@@ -99,7 +99,7 @@ del_event(int fd)
   event_data_t* evt;
 
   if (!(evt = lookup_event(fd))) {
-    eprintf("can't find event %d", fd);
+    eprintf("can't find event by fd %d", fd);
     return;
   }
 
@@ -112,3 +112,20 @@ del_event(int fd)
   need_refresh = true;
 }
 
+int
+modify_event(int fd, int evtf)
+{
+  struct epoll_event ep_evt;
+  event_data_t* evt;
+
+  if (!(evt = lookup_event(fd))) {
+    eprintf("can't find event by fd %d", fd);
+    return -EINVAL;
+  }
+
+  ZEROING(ep_evt);
+  ep_evt.events = evtf;
+  ep_evt.data.ptr = evt;
+
+  return epoll_ctl(ep_fd, EPOLL_CTL_MOD, fd, &ep_evt);
+}

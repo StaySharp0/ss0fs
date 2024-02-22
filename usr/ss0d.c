@@ -26,8 +26,9 @@ const char program_name[] = SS0D;
 bool_t is_active = true;
 bool_t is_debug = true;
 short int control_port = 0;
+static bool_t is_daemon = true;
 
-static struct option const l_opts[] = {
+static struct option l_opts[] = {
   { "foreground", no_argument, 0, 'f' },
   { "pid-file", required_argument, 0, 'p' },
   { "control_port", required_argument, 0, 'C' },
@@ -56,27 +57,25 @@ usage(int status)
 }
 
 static void
-parse_opt_(int argc, char** argv)
+opt_handler(int opt, char* value, void* data)
 {
-  int ch, l_idx;
-
-  while ((ch = getopt_long(argc, argv, s_opts, l_opts, &l_idx)) >= 0) {
-    errno = 0;
-    switch (ch) {
-      case 'C':
-        if (ATON_GE(optarg, control_port, 0))
-          INVAL_OPT(ch, optarg, usage);
-
-        break;
-      case 'V':
-        version();
-        break;
-      case 'h':
-        usage(0);
-        break;
-      default:
-        usage(1);
-    }
+  switch (opt) {
+    case 'f':
+      is_daemon = false;
+      break;
+    case 'C':
+      if (ATON_GE(value, control_port, 0))
+        INVAL_OPT(opt, value, usage);
+      break;
+    case 'V':
+      version();
+      break;
+    case 'h':
+      usage(0);
+    case '?':
+      break;
+    default:
+      usage(1);
   }
 }
 
@@ -145,6 +144,13 @@ set_rlimit:
 }
 
 static void
+init_daemon(void)
+{
+  if (is_daemon && daemon(0, 0))
+    exit(1);
+}
+
+static void
 exit_main(int signo)
 {
   if (is_active) {
@@ -156,12 +162,13 @@ exit_main(int signo)
 int
 main(int argc, char** argv)
 {
-  parse_opt_(argc, argv);
+  parse_opt(argc, argv, l_opts, s_opts, opt_handler, NULL);
 
   set_signal(exit_main);
   set_proc_oom();
   set_proc_nr_open();
 
+  init_daemon();
   init_event_loop();
   init_ctl_ipc();
 

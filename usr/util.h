@@ -13,7 +13,7 @@
 #define ARR_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 #define STR_SIZE(x) (sizeof(x) - 1)
 
-#define ALLOC(size)                                                            \
+#define CALLOC(size)                                                           \
   ({                                                                           \
     void* ptr;                                                                 \
     if ((ptr = calloc(1, size)) == NULL)                                       \
@@ -50,13 +50,18 @@
     usage(errno);                                                              \
   })
 
-typedef void (*opt_handler_t)(int opt, char* value);
+#define NOP                                                                    \
+  do {                                                                         \
+  } while (false);
+
+typedef void (*opt_handler_t)(int opt, char* value, void* data);
 void
 parse_opt(int argc,
           char** argv,
           struct option* l_opts,
           char* s_opts,
-          opt_handler_t handler);
+          opt_handler_t handler,
+          void* data);
 
 static inline void
 version(void)

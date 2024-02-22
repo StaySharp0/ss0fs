@@ -1,0 +1,7 @@
+#ifndef OP
+#define OP(enum, key)
+#endif
+
+OP(STOP, stop)
+
+#undef OP

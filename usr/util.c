@@ -14,7 +14,8 @@ parse_opt(int argc,
           char** argv,
           struct option* l_opts,
           char* s_opts,
-          opt_handler_t handler)
+          opt_handler_t handler,
+          void* data)
 {
   int opt, l_idx;
 
@@ -30,7 +31,7 @@ parse_opt(int argc,
 
     if (opt != -1) {
       dprintf("opt '%c': '%s'\n", opt, optarg);
-      handler(opt, optarg);
+      handler(opt, optarg, data);
     }
   } while (opt != -1);
 }

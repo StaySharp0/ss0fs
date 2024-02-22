@@ -21,9 +21,12 @@ void
 run_event_loop(void);
 
 int
-add_event(int fd, int evts, event_handler_t handler, void* data);
+add_event(int fd, int evtf, event_handler_t handler, void* data);
 
 void
 del_event(int fd);
+
+int
+modify_event(int fd, int evtf);
 
 #endif /* _EVENT_H */

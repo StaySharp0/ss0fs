@@ -36,7 +36,9 @@ typedef uint8_t ctl_state_t;
 typedef struct ctl_s
 {
   ctl_state_t state;
-  char* req_buf;
+  int progress;
+  cli_req_t req;
+  cli_res_t res;
 } ctl_t;
 
 static ctl_t*
@@ -44,7 +46,7 @@ ctl_alloc(void)
 {
   ctl_t* ctl;
 
-  if (!(ctl = ALLOC(sizeof(*ctl)))) {
+  if (!(ctl = CALLOC(sizeof(*ctl)))) {
     eprintf("can't allocate control");
     return NULL;
   }
@@ -60,18 +62,91 @@ ctl_free(ctl_t* ctl)
 {
   dprintf("control: %p\n", ctl);
 
-  if (ctl) {
-    if (ctl->req_buf)
-      free(ctl->req_buf);
-
+  if (ctl)
     free(ctl);
+}
+
+static int
+do_op_stop(ctl_t* ctl)
+{
+  NOP;
+  return 0;
+}
+
+static int
+ctl_execute(ctl_t* ctl)
+{
+  cli_req_t* req = &ctl->req;
+
+  switch (req->op) {
+#define OP(name, key)                                                          \
+  case OP_##name:                                                              \
+    do_op_##key(ctl);                                                          \
+    break;
+#include "op.list"
+    default:
+      break;
   }
+  return 0;
+}
+
+static int
+ctl_submit(int fd, ctl_t* ctl)
+{
+  int rtn = -1;
+
+  ctl->state = CTL_HDR_SEND;
+  ctl->progress = 0;
+  ctl->res.status = ctl_execute(ctl);
+
+  if ((rtn = modify_event(fd, EPOLLOUT)))
+    eprintf("failed to modify event out\n");
+
+  return rtn;
 }
 
 static void
 ctl_recv_send_handler(int fd, int evts, void* data)
 {
-  dprintf("");
+  ctl_t* ctl = data;
+  cli_req_t* req = &ctl->req;
+  cli_res_t* res = &ctl->res;
+  int ret, remain;
+  char* buf;
+
+  switch (ctl->state) {
+    case CTL_HDR_RECV:
+      buf = (char*)req + ctl->progress;
+      remain = sizeof(*req) - ctl->progress;
+
+      if ((ret = read(fd, buf, remain)) < 0) {
+        if (errno != EAGAIN)
+          goto out;
+      }
+
+      if ((ctl->progress += ret) == sizeof(*req)) {
+        ctl_submit(fd, ctl);
+      }
+      break;
+    case CTL_HDR_SEND:
+      buf = (char*)res + ctl->progress;
+      remain = sizeof(*res) - ctl->progress;
+
+      if ((ret = write(fd, buf, remain)) < 0) {
+        if (errno != EAGAIN)
+          goto out;
+      }
+      break;
+  }
+
+  return;
+out:
+  if (req->op == OP_STOP)
+    is_active = 0;
+
+  del_event(fd);
+  close(fd);
+  ctl_free(ctl);
 }
 
 static void
@@ -82,8 +157,6 @@ ctl_handler(int accept_fd, int evts, void* data)
   struct ucred cred;
   socklen_t len;
   ctl_t* ptr;
-
-  dprintf("");
 
   /* ipc accept */
   len = sizeof(addr);
