@@ -6,12 +6,20 @@ compile_commands.json
 .*
 !.gitignore
 !.clang-format
-*.o
+*.symvers.cmd
+*.order.cmd
+*.ko.cmd
+Module.symvers
+modules.order
+*.mod
+*.mod.*
+*.ko
 *.d
+*.o
+*.o.cmd
 
 ############
 # programs #
 ############
 usr/ss0d
 usr/ss0cli
-
