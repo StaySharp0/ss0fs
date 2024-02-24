@@ -13,6 +13,11 @@ struct ss0fs_context
   unsigned int minorversion;
 };
 
+struct ss0fs_mount_data
+{
+  int version;
+};
+
 /* super.c */
 void
 ss0fs_kill_sb(struct super_block* sb);

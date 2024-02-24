@@ -37,6 +37,8 @@ ss0fs_get_tree_common(struct fs_context* fc)
   struct ss0fs_context* ctx = FC2CTX(fc);
   struct super_block* sb;
 
+  printk(KERN_DEBUG "ss0fs_get_tree_common\n");
+
   fill_super(sb, ctx);
 
   sb->s_flags |= SB_ACTIVE;

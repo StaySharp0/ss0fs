@@ -22,5 +22,6 @@ log-clear:
 	sudo dmesg -C
 
 test: insmod log-clear
-	sudo mount -t $(MDO) test /mnt/test; \
+	sudo mkdir -p /mnt/test; \
+	sudo mount -t $(MOD) test /mnt/test; \
 	sudo dmesg
