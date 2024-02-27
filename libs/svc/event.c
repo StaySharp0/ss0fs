@@ -7,12 +7,12 @@
 #include "types.h"
 #include "util.h"
 
-static int epfd = 0;
+static int ep_fd = 0;
 
 void
 init_event_loop(void)
 {
-  if ((epfd = epoll_create(4096)) < 0) {
+  if ((ep_fd = epoll_create(4096)) < 0) {
     eprintf_errno("can't create epoll");
     exit(1);
   }
@@ -22,11 +22,12 @@ void
 run_event_loop(void)
 {
   extern bool_t is_active;
+
   int nr_evt, i;
   struct epoll_event evts[1024];
 
 retry:
-  if ((nr_evt = epoll_wait(epfd, evts, SIZE_ARR(evts), -1))) {
+  if ((nr_evt = epoll_wait(ep_fd, evts, SIZE_ARR(evts), -1))) {
     if (errno != EINTR) {
       eprintf_errno("can't handle error in epoll");
       exit(1);
@@ -42,8 +43,8 @@ retry:
 }
 
 void
-exit_event_loop(void)
+close_event_loop(void)
 {
-  if (epfd > 0)
-    close(epfd);
+  if (ep_fd > 0)
+    close(ep_fd);
 }

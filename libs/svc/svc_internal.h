@@ -1,6 +1,8 @@
 #ifndef __SVC_INTERNAL_H__
 #define __SVC_INTERNAL_H__
 
+#include "types.h"
+
 /* event.c */
 extern void
 init_event_loop(void);
@@ -9,10 +11,13 @@ extern void
 run_event_loop(void);
 
 extern void
-exit_event_loop(void);
+close_event_loop(void);
 
 /* contorl.c */
-void
+extern void
 init_ctl_ipc(void);
+
+extern void
+close_ctl_ipc(void);
 
 #endif // !__SVC_INTERNAL_H__

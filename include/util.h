@@ -18,17 +18,4 @@
   })
 #define ZEROING(var) memset(&var, 0, sizeof(var))
 
-#ifndef __GNUC__
-#define snprintf_nowarn snprintf
-#else
-#define snprintf_nowarn(...)                                                   \
-  __extension__({                                                              \
-    _Pragma("GCC diagnostic push");                                            \
-    _Pragma("GCC diagnostic ignored \"-Wformat-truncation\"");                 \
-    const int _snprintf_nowarn = snprintf(__VA_ARGS__);                        \
-    _Pragma("GCC diagnostic pop");                                             \
-    _snprintf_nowarn;                                                          \
-  })
-#endif
-
 #endif /* __UTIL_H__ */

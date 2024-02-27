@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/resource.h>
+
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -18,6 +19,8 @@
 
 const char* basename = NULL;
 bool_t is_active = true;
+port_t ctl_port = 0;
+
 static flag_t svc_mode = 0;
 
 static inline void
@@ -54,7 +57,7 @@ set_oom(void)
   }
 
   if (write(fd, score, strlen(score)) < 0) {
-    eprintf_errno("can't write %s (%s)", path, score);
+    eprintf_errno("can't write %s: %s", path, score);
     goto out;
   }
 
@@ -95,7 +98,7 @@ set_rlimit:
   rlim.rlim_cur = rlim.rlim_max = max;
 
   if ((ret = setrlimit(RLIMIT_NOFILE, &rlim)) < 0) {
-    eprintf_errno("can't set RLIMIT_NOFILE(%d)", max);
+    eprintf_errno("can't set RLIMIT_NOFILE: %d", max);
     exit(1);
   }
 }
@@ -113,7 +116,8 @@ static void
 exit_svc(int signo)
 {
   if (is_active) {
-    exit_event_loop();
+    close_event_loop();
+    close_ctl_ipc();
     is_active = false;
   }
 }
@@ -165,8 +169,9 @@ svc_run(void)
   set_oom();
   set_nr_open();
 
-  init_daemon();
   init_event_loop();
+  init_ctl_ipc();
+  init_daemon();
 
   run_event_loop();
 

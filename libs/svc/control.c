@@ -13,20 +13,34 @@ static int ipc_fd = 0;
 static int lock_fd = 0;
 
 static int
+mkdir_run(char* run_path)
+{
+  struct stat st;
+
+  if (stat(run_path, &st))
+    if (mkdir(run_path, 0755)) {
+      eprintf_errno("failed to create directory '%s'", run_path);
+      return -1;
+    }
+
+  return 0;
+}
+
+static int
 check_lock_file(char* lock_path)
 {
   mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
   if ((lock_fd = open(lock_path, O_WRONLY | O_CREAT, mode)) < 0) {
-    eprintf("failed to open lock file for control IPC\n");
+    eprintf("failed to open lock file for control IPC");
     goto out;
   }
 
   if (lockf(lock_fd, F_TLOCK, 1) < 0) {
     if (errno == EACCES || errno == EAGAIN)
-      eprintf("another instance is using %s\n", lock_path);
+      eprintf("another instance is using %s", lock_path);
     else
-      eprintf_errno("unable to get lock of control IPC: %s\n", lock_path);
+      eprintf_errno("unable to get lock of control IPC: %s", lock_path);
     goto out;
   }
 
@@ -39,7 +53,7 @@ out:
 }
 
 static int
-set_ipc(char* ipc_path)
+open_ipc(char* ipc_path)
 {
   struct sockaddr_un addr;
   int fd = 0;
@@ -85,22 +99,20 @@ void
 init_ctl_ipc(void)
 {
   extern const char* basename;
-  extern short control_port;
+  extern short ctl_port;
 
-  char dir[256], path[256];
-  struct stat st;
+  char dir[128], path[256];
 
   snprintf(dir, SIZE_STR_BUF(dir), "/var/run/%s", basename);
-  if (stat(dir, &st) < 0)
-    mkdir(dir, 0755);
-
-  snprintf_nowarn(
-    path, SIZE_STR_BUF(path) - 50, "%s/socket.%d.lock", dir, control_port);
-  if (!check_lock_file(path))
+  if (mkdir_run(dir))
     goto out;
 
-  snprintf_nowarn(path, SIZE_STR_BUF(path), "%s/socket.%d", dir, control_port);
-  if (!set_ipc(path))
+  snprintf(path, SIZE_STR_BUF(path), "%s/socket.%u.lock", dir, ctl_port);
+  if (check_lock_file(path))
+    goto out;
+
+  snprintf(path, SIZE_STR_BUF(path), "%s/socket.%d", dir, ctl_port);
+  if (open_ipc(path))
     goto out;
 
   return;
@@ -111,4 +123,12 @@ out:
     close(lock_fd);
 
   exit(1);
+}
+
+void
+close_ctl_ipc(void)
+{
+  // event_del(ipc_fd);
+  close(ipc_fd);
+  close(lock_fd);
 }

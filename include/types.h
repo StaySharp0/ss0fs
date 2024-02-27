@@ -10,4 +10,6 @@ typedef unsigned char uchar_t;
 
 typedef unsigned int flag_t;
 
+typedef unsigned short port_t;
+
 #endif /* __TYPES_H__ */
