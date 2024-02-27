@@ -57,6 +57,8 @@ Makefile
 /config.h
 **/*.o
 **/*.a
+/.cache
+compile_commands.json
 
 ############
 # programs #
