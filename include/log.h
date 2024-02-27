@@ -14,4 +14,18 @@ extern const char* basename;
     fprintf(stderr, "%s: " fmt " - %m\n", basename, ##args);                   \
   } while (0)
 
+#define dprintf(fmt, args...)                                                  \
+  do {                                                                         \
+    fprintf(stderr,                                                            \
+            "[%*.*s:%*.*s](%4d) " fmt "\n",                                    \
+            8,                                                                 \
+            8,                                                                 \
+            __FILE__,                                                          \
+            10,                                                                \
+            10,                                                                \
+            __FUNCTION__,                                                      \
+            __LINE__,                                                          \
+            ##args);                                                           \
+  } while (0)
+
 #endif /* __LOG_H__ */
