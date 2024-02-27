@@ -9,10 +9,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "event.h"
 #include "log.h"
 #include "oom.h"
 #include "svc.h"
+#include "svc_internal.h"
 
 #define IS_ROOT_USER (getuid() == 0)
 
