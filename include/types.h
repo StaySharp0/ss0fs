@@ -12,4 +12,4 @@ typedef unsigned int flag_t;
 
 typedef unsigned short port_t;
 
-#endif /* __TYPES_H__ */
+#endif // !__TYPES_H__

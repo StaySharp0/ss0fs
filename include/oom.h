@@ -1,8 +1,8 @@
 /*
  * Reference: include/uapi/linux/oom.h
  */
-#ifndef _OOM_H
-#define _OOM_H
+#ifndef __OOM_H__
+#define __OOM_H__
 
 /*
  * /proc/<pid>/oom_score_adj set to OOM_SCORE_ADJ_MIN disables oom killing for
@@ -20,4 +20,4 @@
 #define OOM_DISABLE (-17)
 #define OOM_DISABLE_STR "-17"
 
-#endif /* _OOM_H */
+#endif // !__OOM_H__

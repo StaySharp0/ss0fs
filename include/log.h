@@ -28,4 +28,4 @@ extern const char* basename;
             ##args);                                                           \
   } while (0)
 
-#endif /* __LOG_H__ */
+#endif // !__LOG_H__

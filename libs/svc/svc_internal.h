@@ -1,8 +1,6 @@
 #ifndef __SVC_INTERNAL_H__
 #define __SVC_INTERNAL_H__
 
-#include "types.h"
-
 /* event.c */
 extern void
 init_event_loop(void);

@@ -27,4 +27,4 @@ svc_set_mode(flag_t flag);
 void
 svc_run(void);
 
-#endif /* __SVC_H__ */
+#endif // !__SVC_H__

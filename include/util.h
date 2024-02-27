@@ -18,4 +18,4 @@
   })
 #define ZEROING(var) memset(&var, 0, sizeof(var))
 
-#endif /* __UTIL_H__ */
+#endif // !__UTIL_H__
