@@ -3,9 +3,11 @@
 # SUBDIRS = 
 
 noinst_HEADERS = \
-								 list.h \
-								 oom.h \
-								 svc.h \
-								 types.h
+								 list.h  \
+								 log.h   \
+								 oom.h   \
+								 svc.h   \
+								 types.h \
+								 util.h
 
 MAINTAINERCLEANFILES = Makefile.in
