@@ -9,10 +9,9 @@
 #define SIZE_ARR(x) (sizeof(x) / sizeof((x)[0]))
 #define SIZE_STR_BUF(x) (sizeof(x) - 1)
 
-#define CALLOC(size)                                                           \
+#define CALLOC(size, ptr)                                                      \
   ({                                                                           \
-    void* ptr;                                                                 \
-    if ((ptr = calloc(1, size)) == NULL)                                       \
+    if ((ptr = calloc(size, sizeof(*ptr))) == NULL)                            \
       eprintf("%m");                                                           \
     ptr;                                                                       \
   })

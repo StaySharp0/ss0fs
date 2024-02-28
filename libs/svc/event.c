@@ -4,10 +4,12 @@
 #include <unistd.h>
 
 #include "log.h"
+#include "svc_internal.h"
 #include "types.h"
 #include "util.h"
 
 static int ep_fd = 0;
+static LIST_HEAD(eds);
 
 void
 init_event_loop(void)
@@ -47,4 +49,32 @@ close_event_loop(void)
 {
   if (ep_fd > 0)
     close(ep_fd);
+}
+
+int
+event_add(int fd, int evtf, event_handler_t handler, void* data)
+{
+  event_data_t* ed;
+  struct epoll_event ep_evt;
+  int ret;
+
+  if (!(ed = CALLOC(1, ed)))
+    return -ENOMEM;
+
+  ed->fd = fd;
+  ed->data = data;
+  ed->handler = handler;
+
+  ZEROING(ep_evt);
+  ep_evt.events = evtf;
+  ep_evt.data.ptr = ed;
+
+  if ((ret = epoll_ctl(ep_fd, EPOLL_CTL_ADD, fd, &ep_evt))) {
+    eprintf_errno("can't add fd: %d", fd);
+    free(ed);
+  } else {
+    list_add(&ed->link, &eds);
+  }
+
+  return ret;
 }

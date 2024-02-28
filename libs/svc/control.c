@@ -1,12 +1,14 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <sys/epoll.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/un.h>
 #include <unistd.h>
 
 #include "log.h"
+#include "svc_internal.h"
 #include "util.h"
 
 static int ipc_fd = 0;
@@ -83,15 +85,14 @@ open_ipc(char* ipc_path)
     goto out;
   }
 
-  /* TODO: event 리팩토링 후 주석 해제
-  if (add_event(fd, EPOLLIN, ctl_handler, NULL))
+  if (event_add(fd, EPOLLIN, NULL /* TODO: 적절한 핸들러 필요 */, NULL))
     goto out;
-  */
 
   ipc_fd = fd;
 
   return 0;
 out:
+  close_ctl_ipc();
   return -1;
 }
 
