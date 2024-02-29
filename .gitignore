@@ -64,3 +64,4 @@ compile_commands.json
 # programs #
 ############
 src/master/ss0msd
+src/storage/ss0ssd
