@@ -1,0 +1,110 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-DHAVE_CONFIG_H",
+      "-I.",
+      "-I../..",
+      "-I../../include",
+      "-g",
+      "-O2",
+      "-c",
+      "-o",
+      "libss0svc_a-svc.o",
+      "svc.c"
+    ],
+    "directory": "/hdd/ss0fs/libs/svc",
+    "file": "/hdd/ss0fs/libs/svc/svc.c",
+    "output": "/hdd/ss0fs/libs/svc/libss0svc_a-svc.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-DHAVE_CONFIG_H",
+      "-I.",
+      "-I../..",
+      "-I../../include",
+      "-g",
+      "-O2",
+      "-c",
+      "-o",
+      "libss0svc_a-event.o",
+      "event.c"
+    ],
+    "directory": "/hdd/ss0fs/libs/svc",
+    "file": "/hdd/ss0fs/libs/svc/event.c",
+    "output": "/hdd/ss0fs/libs/svc/libss0svc_a-event.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-DHAVE_CONFIG_H",
+      "-I.",
+      "-I../..",
+      "-I../../include",
+      "-g",
+      "-O2",
+      "-c",
+      "-o",
+      "libss0svc_a-control.o",
+      "control.c"
+    ],
+    "directory": "/hdd/ss0fs/libs/svc",
+    "file": "/hdd/ss0fs/libs/svc/control.c",
+    "output": "/hdd/ss0fs/libs/svc/libss0svc_a-control.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-DHAVE_CONFIG_H",
+      "-I.",
+      "-I../..",
+      "-I../../include",
+      "-g",
+      "-O2",
+      "-c",
+      "-o",
+      "ss0msd-master_svc.o",
+      "master_svc.c"
+    ],
+    "directory": "/hdd/ss0fs/src/master",
+    "file": "/hdd/ss0fs/src/master/master_svc.c",
+    "output": "/hdd/ss0fs/src/master/ss0msd-master_svc.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-DHAVE_CONFIG_H",
+      "-I.",
+      "-I../..",
+      "-I../../include",
+      "-g",
+      "-O2",
+      "-c",
+      "-o",
+      "ss0ssd-storage_svc.o",
+      "storage_svc.c"
+    ],
+    "directory": "/hdd/ss0fs/src/storage",
+    "file": "/hdd/ss0fs/src/storage/storage_svc.c",
+    "output": "/hdd/ss0fs/src/storage/ss0ssd-storage_svc.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-DHAVE_CONFIG_H",
+      "-I.",
+      "-I../..",
+      "-I../../include",
+      "-g",
+      "-O2",
+      "-c",
+      "-o",
+      "ss0adm-admin_clnt.o",
+      "admin_clnt.c"
+    ],
+    "directory": "/hdd/ss0fs/src/admin",
+    "file": "/hdd/ss0fs/src/admin/admin_clnt.c",
+    "output": "/hdd/ss0fs/src/admin/ss0adm-admin_clnt.o"
+  }
+]

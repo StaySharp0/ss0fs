@@ -58,10 +58,10 @@ Makefile
 **/*.o
 **/*.a
 /.cache
-compile_commands.json
 
 ############
 # programs #
 ############
 src/master/ss0msd
 src/storage/ss0ssd
+src/admin/ss0adm

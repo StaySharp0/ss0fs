@@ -33,6 +33,7 @@ AC_CONFIG_FILES([Makefile
                  libs/Makefile
                  libs/svc/Makefile
                  src/Makefile
+                 src/admin/Makefile
                  src/master/Makefile
                  src/storage/Makefile])
 AC_OUTPUT
