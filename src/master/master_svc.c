@@ -4,6 +4,7 @@
 
 #include "config.h"
 #include "svc.h"
+#include "util.h"
 
 static struct option l_opts[] = {
   { "foreground", no_argument, 0, 'f' },
@@ -56,7 +57,7 @@ opt_handler(int opt, char* value, void* data)
 int
 main(int argc, char** argv)
 {
-  svc_parse_opt(argc, argv, l_opts, s_opts, opt_handler, NULL);
+  parse_opt(argc, argv, l_opts, s_opts, opt_handler, NULL);
 
   svc_run();
 

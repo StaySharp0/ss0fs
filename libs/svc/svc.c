@@ -17,7 +17,6 @@
 
 #define IS_ROOT_USER (getuid() == 0)
 
-const char* basename = NULL;
 bool_t is_active = true;
 port_t ctl_port = 0;
 
@@ -120,40 +119,6 @@ exit_svc(int signo)
     close_ctl_ipc();
     is_active = false;
   }
-}
-
-void
-svc_parse_opt(int argc,
-              char** argv,
-              struct option* l_opts,
-              char* s_opts,
-              opt_handler_t handler,
-              void* data)
-{
-  extern char* optarg;
-  extern int optind;
-  int opt, l_idx;
-
-  if ((basename = strrchr(argv[0], '/')) != NULL)
-    basename++;
-  else
-    basename = argv[0];
-
-  do {
-    opt = getopt_long(argc, argv, s_opts, l_opts, &l_idx);
-    if (opt == -1 && optind < argc) {
-      opt = '?';
-      optarg = argv[optind];
-      argc -= optind;
-      argv += optind;
-      optind = 1;
-    }
-
-    if (opt != -1) {
-      //      dprintf("opt '%c': '%s'\n", opt, optarg);
-      handler(opt, optarg, data);
-    }
-  } while (opt != -1);
 }
 
 void

@@ -10,6 +10,24 @@
       "-O2",
       "-c",
       "-o",
+      "libss0common_a-util.o",
+      "util.c"
+    ],
+    "directory": "/hdd/ss0fs/libs/common",
+    "file": "/hdd/ss0fs/libs/common/util.c",
+    "output": "/hdd/ss0fs/libs/common/libss0common_a-util.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-DHAVE_CONFIG_H",
+      "-I.",
+      "-I../..",
+      "-I../../include",
+      "-g",
+      "-O2",
+      "-c",
+      "-o",
       "libss0svc_a-svc.o",
       "svc.c"
     ],

@@ -11,8 +11,82 @@
 #include "svc_internal.h"
 #include "util.h"
 
+#if defined(SO_PEERCRED) || defined(SCM_CREDENTIALS)
+struct ucred
+{
+  pid_t pid; /* PID of sending process.  */
+  uid_t uid; /* UID of sending process.  */
+  gid_t gid; /* GID of sending process.  */
+};
+#endif
+
 static int ipc_fd = 0;
 static int lock_fd = 0;
+
+typedef enum
+{
+  HDR_RECV,
+  PDU_RECV,
+  HDR_SEND,
+  PDU_SEND,
+} ctl_job_state_t;
+
+static void
+recv_send_handler(int fd, int evtf, void* data)
+{
+}
+
+static void
+accept_handler(int accept_fd, int evtf, void* data)
+{
+  int fd = 0, flag;
+  struct sockaddr addr;
+  struct ucred cred;
+  socklen_t len;
+
+  /* ipc accept */
+  len = sizeof(addr);
+  if ((fd = accept(accept_fd, (struct sockaddr*)&addr, &len)) < 0) {
+    eprintf_errno("failed to accept a new connection");
+    return;
+  }
+
+  /* ipc permission */
+  len = sizeof(cred);
+  if (getsockopt(fd, SOL_SOCKET, SO_PEERCRED, (void*)&cred, &len) < 0) {
+    eprintf_errno("failed to get sockopt");
+    goto out;
+  }
+
+  if (cred.uid != getuid() || cred.gid != getgid()) {
+    errno = EPERM;
+    eprintf_errno("failed to accept a new connection");
+    goto out;
+  }
+
+  /* non-blocking socket */
+  if ((flag = fcntl(fd, F_GETFL)) < 0) {
+    eprintf_errno("failed to get fd flags\n");
+    goto out;
+  }
+
+  if (fcntl(fd, F_SETFL, flag | O_NONBLOCK) < 0) {
+    eprintf_errno("failed to set fd O_NONBLOCK flags");
+    goto out;
+  }
+
+  /* TODO: control data */
+
+  if (event_add(fd, EPOLLIN, recv_send_handler, NULL) < 0) {
+    eprintf("failed to add a socket to epoll: %d", fd);
+    goto out;
+  }
+
+  return;
+out:
+  if (fd > 0)
+    close(fd);
+}
 
 static int
 mkdir_run(char* run_path)
@@ -85,7 +159,7 @@ open_ipc(char* ipc_path)
     goto out;
   }
 
-  if (event_add(fd, EPOLLIN, NULL /* TODO: 적절한 핸들러 필요 */, NULL))
+  if (event_add(fd, EPOLLIN, accept_handler, NULL))
     goto out;
 
   ipc_fd = fd;

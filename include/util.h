@@ -1,6 +1,7 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
+#include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -16,5 +17,16 @@
     ptr;                                                                       \
   })
 #define ZEROING(var) memset(&var, 0, sizeof(var))
+
+extern const char* basename;
+
+typedef void (*opt_handler_t)(int opt, char* value, void* data);
+void
+parse_opt(int argc,
+          char** argv,
+          struct option* l_opts,
+          char* s_opts,
+          opt_handler_t handler,
+          void* data);
 
 #endif // !__UTIL_H__
