@@ -2,6 +2,6 @@
 
 AUTOMAKE_OPTIONS = foreign
 
-SUBDIRS = libs src
+SUBDIRS = libs master storage admin
 
 MAINTAINERCLEANFILES = Makefile.in

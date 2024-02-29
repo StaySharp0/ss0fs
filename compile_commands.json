@@ -13,9 +13,9 @@
       "libss0common_a-util.o",
       "util.c"
     ],
-    "directory": "/hdd/ss0fs/libs/common",
-    "file": "/hdd/ss0fs/libs/common/util.c",
-    "output": "/hdd/ss0fs/libs/common/libss0common_a-util.o"
+    "directory": "/home/ss0/ss0fs/libs/common",
+    "file": "/home/ss0/ss0fs/libs/common/util.c",
+    "output": "/home/ss0/ss0fs/libs/common/libss0common_a-util.o"
   },
   {
     "arguments": [
@@ -31,9 +31,9 @@
       "libss0svc_a-svc.o",
       "svc.c"
     ],
-    "directory": "/hdd/ss0fs/libs/svc",
-    "file": "/hdd/ss0fs/libs/svc/svc.c",
-    "output": "/hdd/ss0fs/libs/svc/libss0svc_a-svc.o"
+    "directory": "/home/ss0/ss0fs/libs/svc",
+    "file": "/home/ss0/ss0fs/libs/svc/svc.c",
+    "output": "/home/ss0/ss0fs/libs/svc/libss0svc_a-svc.o"
   },
   {
     "arguments": [
@@ -49,9 +49,9 @@
       "libss0svc_a-event.o",
       "event.c"
     ],
-    "directory": "/hdd/ss0fs/libs/svc",
-    "file": "/hdd/ss0fs/libs/svc/event.c",
-    "output": "/hdd/ss0fs/libs/svc/libss0svc_a-event.o"
+    "directory": "/home/ss0/ss0fs/libs/svc",
+    "file": "/home/ss0/ss0fs/libs/svc/event.c",
+    "output": "/home/ss0/ss0fs/libs/svc/libss0svc_a-event.o"
   },
   {
     "arguments": [
@@ -67,17 +67,17 @@
       "libss0svc_a-control.o",
       "control.c"
     ],
-    "directory": "/hdd/ss0fs/libs/svc",
-    "file": "/hdd/ss0fs/libs/svc/control.c",
-    "output": "/hdd/ss0fs/libs/svc/libss0svc_a-control.o"
+    "directory": "/home/ss0/ss0fs/libs/svc",
+    "file": "/home/ss0/ss0fs/libs/svc/control.c",
+    "output": "/home/ss0/ss0fs/libs/svc/libss0svc_a-control.o"
   },
   {
     "arguments": [
       "/usr/bin/gcc",
       "-DHAVE_CONFIG_H",
       "-I.",
-      "-I../..",
-      "-I../../include",
+      "-I..",
+      "-I../include",
       "-g",
       "-O2",
       "-c",
@@ -85,17 +85,17 @@
       "ss0msd-master_svc.o",
       "master_svc.c"
     ],
-    "directory": "/hdd/ss0fs/src/master",
-    "file": "/hdd/ss0fs/src/master/master_svc.c",
-    "output": "/hdd/ss0fs/src/master/ss0msd-master_svc.o"
+    "directory": "/home/ss0/ss0fs/master",
+    "file": "/home/ss0/ss0fs/master/master_svc.c",
+    "output": "/home/ss0/ss0fs/master/ss0msd-master_svc.o"
   },
   {
     "arguments": [
       "/usr/bin/gcc",
       "-DHAVE_CONFIG_H",
       "-I.",
-      "-I../..",
-      "-I../../include",
+      "-I..",
+      "-I../include",
       "-g",
       "-O2",
       "-c",
@@ -103,17 +103,17 @@
       "ss0ssd-storage_svc.o",
       "storage_svc.c"
     ],
-    "directory": "/hdd/ss0fs/src/storage",
-    "file": "/hdd/ss0fs/src/storage/storage_svc.c",
-    "output": "/hdd/ss0fs/src/storage/ss0ssd-storage_svc.o"
+    "directory": "/home/ss0/ss0fs/storage",
+    "file": "/home/ss0/ss0fs/storage/storage_svc.c",
+    "output": "/home/ss0/ss0fs/storage/ss0ssd-storage_svc.o"
   },
   {
     "arguments": [
       "/usr/bin/gcc",
       "-DHAVE_CONFIG_H",
       "-I.",
-      "-I../..",
-      "-I../../include",
+      "-I..",
+      "-I../include",
       "-g",
       "-O2",
       "-c",
@@ -121,8 +121,8 @@
       "ss0adm-admin_clnt.o",
       "admin_clnt.c"
     ],
-    "directory": "/hdd/ss0fs/src/admin",
-    "file": "/hdd/ss0fs/src/admin/admin_clnt.c",
-    "output": "/hdd/ss0fs/src/admin/ss0adm-admin_clnt.o"
+    "directory": "/home/ss0/ss0fs/admin",
+    "file": "/home/ss0/ss0fs/admin/admin_clnt.c",
+    "output": "/home/ss0/ss0fs/admin/ss0adm-admin_clnt.o"
   }
 ]

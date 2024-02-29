@@ -62,6 +62,6 @@ Makefile
 ############
 # programs #
 ############
-src/master/ss0msd
-src/storage/ss0ssd
-src/admin/ss0adm
+/master/ss0msd
+/storage/ss0ssd
+/admin/ss0adm

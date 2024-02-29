@@ -35,15 +35,14 @@ AC_TYPE_MODE_T
 AC_TYPE_PID_T
 
 # Checks for library functions.
-AC_CHECK_FUNCS([mkdir socket])
+AC_CHECK_FUNCS([mkdir socket strrchr])
 
 AC_CONFIG_FILES([Makefile
+                 admin/Makefile
                  include/Makefile
                  libs/Makefile
                  libs/common/Makefile
                  libs/svc/Makefile
-                 src/Makefile
-                 src/admin/Makefile
-                 src/master/Makefile
-                 src/storage/Makefile])
+                 master/Makefile
+                 storage/Makefile])
 AC_OUTPUT
