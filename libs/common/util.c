@@ -13,27 +13,46 @@ parse_opt(int argc,
           void* data)
 {
   extern char* optarg;
-  extern int optind;
+  extern int optind, optopt, opterr;
 
-  int opt, l_idx;
+  int nargc = argc, opt, l_idx;
+  char** nargv = argv;
+  const char* opt_str;
 
   if ((basename = strrchr(argv[0], '/')) != NULL)
     basename++;
   else
     basename = argv[0];
 
-  do {
-    opt = getopt_long(argc, argv, s_opts, l_opts, &l_idx);
-    if (opt == -1 && optind < argc) {
-      opt = '?';
-      optarg = argv[optind];
-      argc -= optind;
-      argv += optind;
-      optind = 1;
-    }
+  /* ignore getopt_long err msg */
+  opterr = 0;
 
-    if (opt != -1) {
-      handler(opt, optarg, data);
-    }
-  } while (opt != -1);
+parse:
+  opt = getopt_long(nargc, nargv, s_opts, l_opts, &l_idx);
+  opt_str = nargv[optind - 1];
+
+  /* unknown short option */
+  if (opt == '?' && optopt) {
+    eprintf("unrecognized option '-%c'", optopt);
+    handler(-1, NULL, data);
+  }
+  /* unknwon long option */
+  else if (opt == '?' && opt_str) {
+    eprintf("unrecognized option '%s'", opt_str);
+    handler(-1, NULL, data);
+  }
+
+  /* non-option arguments */
+  if (opt == -1 && optind < nargc) {
+    opt = '?';
+    optarg = nargv[optind];
+    nargc -= optind;
+    nargv += optind;
+    optind = 1;
+  }
+
+  if (opt != -1) {
+    handler(opt, optarg, data);
+    goto parse;
+  }
 }
