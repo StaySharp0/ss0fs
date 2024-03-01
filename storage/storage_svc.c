@@ -6,6 +6,8 @@
 #include "svc.h"
 #include "util.h"
 
+static port_t port = 0;
+
 static struct option l_opts[] = {
   { "foreground", no_argument, 0, 'f' },
   { "port", required_argument, 0, 'p' },
@@ -13,7 +15,6 @@ static struct option l_opts[] = {
   { "help", no_argument, 0, 'h' },
   { 0, 0, 0, 0 },
 };
-
 static char* s_opts = "fVhp:";
 
 static void
@@ -37,10 +38,13 @@ usage(int status)
 static void
 opt_handler(int opt, char* value, void* data)
 {
-
   switch (opt) {
     case 'f':
       svc_set_mode(MODE_SVC_FG);
+      break;
+    case 'p':
+      if (STR2NUM(value, port))
+        INVAL_OPT(opt, value, usage);
       break;
     case 'V':
       printf("%s version " VERSION "\n", basename);
@@ -59,7 +63,7 @@ main(int argc, char** argv)
 {
   parse_opt(argc, argv, l_opts, s_opts, opt_handler, NULL);
 
-  svc_run();
+  svc_run(port);
 
   return 0;
 }

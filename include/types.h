@@ -1,6 +1,8 @@
 #ifndef __TYPES_H__
 #define __TYPES_H__
 
+#include <stdint.h>
+
 typedef unsigned char uchar_t;
 #define bool_t uchar_t
 #ifndef true
@@ -10,6 +12,6 @@ typedef unsigned char uchar_t;
 
 typedef unsigned int flag_t;
 
-typedef unsigned short port_t;
+typedef uint16_t port_t;
 
 #endif // !__TYPES_H__

@@ -2,11 +2,14 @@
 #define __SVC_INTERNAL_H__
 
 #include "list.h"
+#include "types.h"
 
-/* event.c */
+/*
+ * event.c
+ */
 typedef void (*event_handler_t)(int fd, int events, void* data);
 
-typedef struct event_data_s
+typedef struct
 {
   event_handler_t handler;
   int fd;
@@ -26,11 +29,19 @@ close_event_loop(void);
 extern int
 event_add(int fd, int evtf, event_handler_t handler, void* data);
 
-/* contorl.c */
-extern void
-init_ctl_ipc(void);
+extern int
+event_modify(int fd, int evtf);
 
 extern void
-close_ctl_ipc(void);
+event_del(int fd);
+
+/*
+ * contorl.c
+ */
+extern void
+init_cntl_ipc(port_t cntl_port);
+
+extern void
+close_cntl_ipc(void);
 
 #endif // !__SVC_INTERNAL_H__

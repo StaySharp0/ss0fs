@@ -2,7 +2,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <signal.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/resource.h>
@@ -18,7 +17,6 @@
 #define IS_ROOT_USER (getuid() == 0)
 
 bool_t is_active = true;
-port_t ctl_port = 0;
 
 static flag_t svc_mode = 0;
 
@@ -116,7 +114,7 @@ exit_svc(int signo)
 {
   if (is_active) {
     close_event_loop();
-    close_ctl_ipc();
+    close_cntl_ipc();
     is_active = false;
   }
 }
@@ -128,14 +126,14 @@ svc_set_mode(flag_t flag)
 }
 
 void
-svc_run(void)
+svc_run(port_t cntl_port)
 {
   set_signal(exit_svc);
   set_oom();
   set_nr_open();
 
   init_event_loop();
-  init_ctl_ipc();
+  init_cntl_ipc(cntl_port);
   init_daemon();
 
   run_event_loop();

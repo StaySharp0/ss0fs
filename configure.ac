@@ -25,7 +25,7 @@ AC_PROG_RANLIB
 # Checks for libraries.
 
 # Checks for header files.
-AC_CHECK_HEADERS([fcntl.h sys/socket.h unistd.h])
+AC_CHECK_HEADERS([fcntl.h stdint.h sys/socket.h unistd.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
@@ -33,9 +33,11 @@ AC_TYPE_UID_T
 AC_C_INLINE
 AC_TYPE_MODE_T
 AC_TYPE_PID_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT8_T
 
 # Checks for library functions.
-AC_CHECK_FUNCS([mkdir socket strrchr])
+AC_CHECK_FUNCS([mkdir socket strrchr strtoull unistd.h])
 
 AC_CONFIG_FILES([Makefile
                  admin/Makefile

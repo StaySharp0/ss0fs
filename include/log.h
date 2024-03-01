@@ -18,11 +18,11 @@ extern const char* basename;
   do {                                                                         \
     fprintf(stderr,                                                            \
             "[%*.*s:%*.*s](%4d) " fmt "\n",                                    \
-            8,                                                                 \
-            8,                                                                 \
+            12,                                                                \
+            12,                                                                \
             __FILE__,                                                          \
-            10,                                                                \
-            10,                                                                \
+            12,                                                                \
+            12,                                                                \
             __FUNCTION__,                                                      \
             __LINE__,                                                          \
             ##args);                                                           \

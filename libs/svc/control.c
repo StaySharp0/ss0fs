@@ -1,5 +1,7 @@
+#include <assert.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/epoll.h>
 #include <sys/socket.h>
@@ -8,7 +10,9 @@
 #include <unistd.h>
 
 #include "log.h"
+#include "svc.h"
 #include "svc_internal.h"
+#include "types.h"
 #include "util.h"
 
 #if defined(SO_PEERCRED) || defined(SCM_CREDENTIALS)
@@ -29,11 +33,127 @@ typedef enum
   PDU_RECV,
   HDR_SEND,
   PDU_SEND,
-} ctl_job_state_t;
+} cntl_state_t;
+
+typedef struct
+{
+  int fd;
+  cntl_state_t state;
+  int progress;
+  cntl_req_t req;
+  cntl_res_t res;
+} cntl_job_t;
+
+static cntl_job_t*
+alloc_cntl_job(void)
+{
+  cntl_job_t* job;
+
+  if (!(job = CALLOC(1, job))) {
+    eprintf("can't allocate control job");
+    goto out;
+  }
+
+  job->state = HDR_RECV;
+
+out:
+  dprintf("cntl_job :%p", job);
+  return job;
+}
+
+static void
+free_cntl_job(cntl_job_t* job)
+{
+  dprintf("cntl_job :%p", job);
+
+  free(job);
+}
+
+static void
+sys_cntl(cntl_req_t* req, cntl_res_t* res)
+{
+  assert(req->mode == MODE_SYSTEM);
+
+  if (req->op == OP_DOWN) {
+    /* TODO: resource cleanup */
+    res->len = sizeof(*res);
+    res->status = 0;
+  }
+}
+
+static int
+process_cntl(cntl_job_t* job, int fd)
+{
+  int ret;
+  cntl_req_t* req = &job->req;
+  cntl_res_t* res = &job->res;
+
+  if (req->mode == MODE_SYSTEM)
+    sys_cntl(req, res);
+
+  /* set send reply state */
+  job->state = HDR_SEND;
+  job->progress = 0;
+
+  if ((ret = event_modify(fd, EPOLLOUT)))
+    eprintf("failed to modify control job event out");
+
+  return ret;
+}
 
 static void
 recv_send_handler(int fd, int evtf, void* data)
 {
+  extern bool_t is_active;
+
+  int len, ret;
+  cntl_job_t* job = data;
+  cntl_req_t* req = &job->req;
+  cntl_res_t* res = &job->res;
+
+  switch (job->state) {
+    case HDR_RECV:
+      len = sizeof(*req) - job->progress;
+      if ((ret = read(fd, req + job->progress, len)) > 0) {
+        job->progress += ret;
+        if (job->progress == sizeof(*req)) {
+          if ((ret = process_cntl(job, fd)))
+            goto out;
+        }
+      } else if (errno != EAGAIN)
+        goto out;
+      break;
+    case PDU_RECV:
+      /* TODO: RECV PDU */
+      break;
+    case HDR_SEND:
+      len = sizeof(*res) - job->progress;
+      if ((ret = write(fd, res + job->progress, len)) > 0) {
+        job->progress += ret;
+
+        if (job->progress == sizeof(*res)) {
+          if (job->progress == res->len)
+            goto out;
+          /* TODO: PDU_SEND */
+        }
+      } else if (errno != EAGAIN)
+        goto out;
+      break;
+    case PDU_SEND:
+      /* TODO: SEND PDU */
+      break;
+    default:
+      eprintf("unknown state %d", job->state);
+  }
+
+  return;
+out:
+  if (req->mode == MODE_SYSTEM && req->op == OP_DOWN && res->status == 0)
+    is_active = false;
+
+  event_del(fd);
+  close(fd);
+  free_cntl_job(job);
 }
 
 static void
@@ -43,6 +163,7 @@ accept_handler(int accept_fd, int evtf, void* data)
   struct sockaddr addr;
   struct ucred cred;
   socklen_t len;
+  cntl_job_t* job;
 
   /* ipc accept */
   len = sizeof(addr);
@@ -75,9 +196,10 @@ accept_handler(int accept_fd, int evtf, void* data)
     goto out;
   }
 
-  /* TODO: control data */
+  if (!(job = alloc_cntl_job()))
+    goto out;
 
-  if (event_add(fd, EPOLLIN, recv_send_handler, NULL) < 0) {
+  if (event_add(fd, EPOLLIN, recv_send_handler, job) < 0) {
     eprintf("failed to add a socket to epoll: %d", fd);
     goto out;
   }
@@ -166,15 +288,14 @@ open_ipc(char* ipc_path)
 
   return 0;
 out:
-  close_ctl_ipc();
+  close_cntl_ipc();
   return -1;
 }
 
 void
-init_ctl_ipc(void)
+init_cntl_ipc(port_t cntl_port)
 {
   extern const char* basename;
-  extern short ctl_port;
 
   char dir[128], path[256];
 
@@ -182,11 +303,11 @@ init_ctl_ipc(void)
   if (mkdir_run(dir))
     goto out;
 
-  snprintf(path, SIZE_STR_BUF(path), "%s/socket.%u.lock", dir, ctl_port);
+  snprintf(path, SIZE_STR_BUF(path), "%s/socket.%u.lock", dir, cntl_port);
   if (check_lock_file(path))
     goto out;
 
-  snprintf(path, SIZE_STR_BUF(path), "%s/socket.%d", dir, ctl_port);
+  snprintf(path, SIZE_STR_BUF(path), "%s/socket.%d", dir, cntl_port);
   if (open_ipc(path))
     goto out;
 
@@ -201,7 +322,7 @@ out:
 }
 
 void
-close_ctl_ipc(void)
+close_cntl_ipc(void)
 {
   // event_del(ipc_fd);
   close(ipc_fd);
