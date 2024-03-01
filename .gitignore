@@ -50,6 +50,7 @@ m4/lt~obsolete.m4
 # can automatically generate from config.status script
 # (which is called by configure script))
 Makefile
+!/fs/Makefile
 
 ##########
 # builds #
@@ -58,6 +59,15 @@ Makefile
 **/*.o
 **/*.a
 /.cache
+*.cmd
+*.ko
+*.mod
+*.mod.c
+*.o
+Module.symvers
+modules.order
+.tmp_versions/
+
 
 ############
 # programs #
