@@ -58,7 +58,7 @@ Makefile
 /config.h
 **/*.o
 **/*.a
-/.cache
+.cache
 *.cmd
 *.ko
 *.mod
