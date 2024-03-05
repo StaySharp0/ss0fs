@@ -101,6 +101,7 @@
       "-Wno-packed-not-aligned",
       "-g",
       "-gdwarf-5",
+      "-I/home/ss0/ss0fs/fs/include",
       "-fsanitize=bounds-strict",
       "-fsanitize=shift",
       "-fsanitize=bool",

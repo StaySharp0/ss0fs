@@ -1,9 +1,11 @@
+#include <debug.h>
+
 #include <linux/module.h>
 
 static int __init
 init_ss0fs(void)
 {
-  printk(KERN_INFO "hello ss0fs\n");
+  dout("hello\n");
 
   return 0;
 }
@@ -11,7 +13,7 @@ init_ss0fs(void)
 static void __exit
 exit_ss0fs(void)
 {
-  printk(KERN_INFO "bye~ ss0fs\n");
+  dout("bye\n");
 }
 
 module_init(init_ss0fs);
