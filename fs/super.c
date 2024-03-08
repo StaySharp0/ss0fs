@@ -2,10 +2,21 @@
 
 #include <linux/module.h>
 
+static struct ss0_fs_client*
+create_fs_client(void)
+{
+
+  create_client();
+
+  return NULL;
+}
+
 static int __init
 init_ss0fs(void)
 {
   dout("hello\n");
+
+  create_fs_client();
 
   return 0;
 }
